@@ -1,6 +1,7 @@
 import tkinter as tk
 
-from src.canvas import HangmanCanvas
+from src.displayer import GameStatusDisplayer, HiddenWordDisplayer
+from src.game_input import Console
 
 
 class Hangman:
@@ -14,9 +15,12 @@ class Hangman:
         self.root.title("Hangman")
 
     def _build_graphical_components(self) -> None:
-        self.canvas: HangmanCanvas = HangmanCanvas(parent=self.root)
+        self.game_status_displayer: GameStatusDisplayer = GameStatusDisplayer(parent=self.root)
+        self.hidden_word_displayer: HiddenWordDisplayer = HiddenWordDisplayer(master=self.root, hidden_word="This is hidden")
+        self.game_input: Console = Console(master=self.root)
 
     def run(self) -> None:
         self.root.mainloop()
+
 
 
