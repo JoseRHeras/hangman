@@ -1,55 +1,33 @@
 import tkinter as tk 
 
-class Console:
-
-    def __init__(self, master:tk.Tk) -> None:
-        self.master: tk.Tk = master
-        self._build_component()
-        self._build_child_components()
-        
-
-    def _build_component(self) -> None:
-        self.component_frame: tk.Frame = tk.Frame(master=self.master)
-        self.component_frame.config(bg="blue")
-
-        self.component_frame.grid(row=3, sticky="we")
-
-
-    def _build_child_components(self) -> None:
-        self.input_box: InputBox = InputBox(master=self.component_frame)
-
-
-
 class InputBox:
 
-    def __init__(self, master:tk.Frame) -> None:
-        self.master:tk.Frame = master
-        self._build_component()
-        self._build_children_components()
-
-    def _build_component(self) -> None:
-        self.component_frame:tk.Frame = tk.Frame(master=self.master)
-        self.component_frame.grid(row=1, column=2)
-
-
-    def _build_children_components(self) -> None:
-        self.label: tk.Label = tk.Label(master=self.component_frame, text="Guess")
-        self.label.pack()
-
-        self._build_and_setup_entry_widget()
-       
-        self.button: tk.Button = tk.Button(master=self.component_frame)
-        self.button.config(text="Try!!", command=self.get_user_input)
-        self.button.pack()
-
-    def _build_and_setup_entry_widget(self) -> None:
-        self.entry_section:tk.Entry = tk.Entry( master=self.component_frame)
-        self.entry_section.config(width=3)
-        self.entry_section.pack()
-
-
-    def get_user_input(self) -> str:
-        return self.entry_section.get()
+    def __init__(self, master:tk.Tk, row:int, cmd) -> None:
+        self.master:tk.Tk = master
+        self.cmd = cmd
         
+        self._build_component_frame(row=row)
+        self._build_child_components()
+    
+    def _build_component_frame(self, row:int) -> None:
+        self.component_frame:tk.Frame = tk.Frame(master=self.master)
+        self.component_frame.config(bg="lightblue", padx=10, pady=10)
+        self.component_frame.grid(row=row, sticky="we")
 
+    def _build_child_components(self) -> None:
+        self.component_label:tk.Label = tk.Label(master=self.component_frame, text="Guess a Word!!")
+        self.entry_box:tk.Entry = tk.Entry( master=self.component_frame)
+        self.button:tk.Button = tk.Button(master=self.component_frame, text="Try!!", command=self._validate_and_submit_input)
+
+        self.component_label.grid(row=1, column=1, padx=5)
+        self.entry_box.grid(row=1, column=2 , padx=5)
+        self.button.grid(row=1, column=3 , padx=5)
+    
+    def _validate_and_submit_input(self) -> None:
+        usr_input = self.entry_box.get()
+
+        if len(usr_input) < 1: print("Must provide an input")
+        if len(usr_input) > 1: print("Must be one character long")
+
+        if len(usr_input) == 1: self.cmd(usr_input)
 

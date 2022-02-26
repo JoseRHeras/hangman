@@ -1,95 +1,82 @@
+from doctest import master
 import tkinter as tk
+from src.components import Canvas, WordGrid
 
 
 class GameStatusDisplayer:
 
-    def __init__(self, parent:tk.Tk) -> None:
-        self.parent: tk.Tk = parent
-        self._build_component()
+    def __init__(self, master: tk.Tk, row: int, allowed_attempts: int) -> None:
+        self.master: tk.Tk = master
+        self.allowed_attempts: int = allowed_attempts
 
-    def _build_component(self) -> None:
-        self.component: tk.Frame = tk.Frame(master=self.parent)
-        self.component.config(bg="red")
+        self._build_component(row=row)
+        self._build_child_components()
 
-        self.canvas: Canvas = Canvas(parent=self.component)
-        self.guessed_displayer: GuessDisplayer = GuessDisplayer(parent=self.component)
-        self.component.grid(row=1)
+    def _build_component(self, row: int) -> None:
+        self.component_frame: tk.Frame = tk.Frame(master=self.master)
+        self.component_frame.config(bg="red")
+        self.component_frame.grid(row=row)
 
+    def _build_child_components(self) -> None:
+        self.canvas: Canvas = Canvas(
+            master=self.component_frame, pieces_to_draw=self.allowed_attempts)
+        self.word_grid: WordGrid = WordGrid(
+            master=self.component_frame, max_number=self.allowed_attempts)
 
-
-class Canvas:
-
-    def __init__(self, parent:tk.Frame) -> None:
-        self.parent:tk.Frame = parent
-        self._build_canvas_component()
-
-    def _build_canvas_component(self) -> None:
-        self.canvas: tk.Canvas = tk.Canvas(master=self.parent)
-        self.canvas.config(width=300, height=200)
-        self.canvas.grid(row=1, column=1)
-
-    
-class GuessDisplayer:
-
-    def __init__(self, parent:tk.Frame) -> None:
-        self.parent: tk.Frame = parent
-        self.max_number_of_words: int = 7
-        self.block_size: int = 30
-
-        self._build_component()
-    
-    def _build_component(self) -> None:
-        self.container: tk.Frame = tk.Frame(master=self.parent)
-        self.container.config(height=200, bg="darkblue")
-        self._build_label_grid()
-        self.container.grid(row=1, column=2, padx=7)
-
-    def _build_label_grid(self) -> None:
-        self.labels: list = []
-        row = col = 1
-        
-        for _ in range(self.max_number_of_words):
-            if col > 3: 
-                col = 1
-                row += 1 
-
-            frame = tk.Frame(master=self.container, width=self.block_size, height=self.block_size, bg="pink", border=2)
-            frame_label = tk.Label(master=frame)
-            string = tk.StringVar(value="  ")
-            frame_label.config(textvariable=string)
-            
-            frame_label.pack()
-            frame.grid(row=row, column=col)
-
-            self.labels.append(frame_label)
-
-            col += 1
-
+    def update_displayer(self, letter: str) -> None:
+        self.word_grid.insert_letter_into_grid(letter=letter)
+        self.canvas.draw_next_piece()
 
 
 class HiddenWordDisplayer:
 
-    def __init__(self, master, hidden_word: str) -> None:
-        self.master = master
+    def __init__(self, master: tk.Tk, hidden_word: str, row: int) -> None:
+        self.master: tk.Tk = master
         self.hidden_word: str = hidden_word
-        self._build_component()
-        self._build_grid()
 
-    def _build_component(self) -> None:
+        self._build_component(row=row)
+        self._build_child_components()
+
+    def _build_component(self, row: int) -> None:
         self.component_frame: tk.Frame = tk.Frame(master=self.master)
-        self.component_frame.grid(row=2)
+        self.component_frame.config(bg="whitesmoke", pady=10, padx=10)
+        self.component_frame.grid(row=row, sticky="we")
 
+    def _build_child_components(self) -> None:
+        self.strings: list = []
 
-    def _build_grid(self) -> None:
-        
         for index in range(len(self.hidden_word)):
-            frame = tk.Frame(master=self.component_frame, height=15, width=15, bg="pink", padx=3, pady=3)
-            
+            frame = tk.Frame(master=self.component_frame,
+                             height=15, width=15, bg="pink", padx=3, pady=3)
+
             label = tk.Label(master=frame)
-            string = tk.StringVar(value=f"{self.hidden_word[index]}")
+            string = tk.StringVar(value=" ")
             label.config(textvariable=string)
-            
+
             label.pack()
+            self.strings.append(string)
+            frame.grid(row=1, column=index)
 
-            frame.grid(row=2, column=index)
+    def reveal_letters_on_the_displayer(self, letter:str) -> None:
+        for index, word in enumerate(self.hidden_word):
+            if word == letter:
+                hidden_block:tk.StringVar = self.strings[index]
+                hidden_block.set(letter)
 
+
+class MessageDisplayer:
+
+    def __init__(self, master:tk.Tk, row:int) -> None:
+        self.master: tk.Tk = master
+
+        self._build_component_frame(row=row)
+        self._build_child_components()
+
+    def _build_component_frame(self, row:int) -> None:
+        self.component_frame:tk.Frame = tk.Frame(master=self.master)
+        self.component_frame.grid(row=row)
+
+    def _build_child_components(self) -> None:
+        self.string_var: tk.StringVar = tk.StringVar(value="This is a test Message")
+        label: tk.Label = tk.Label( master=self.component_frame, textvariable=self.string_var)
+        label.grid(row=1, sticky="we")
