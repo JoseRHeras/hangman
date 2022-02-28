@@ -1,4 +1,3 @@
-from doctest import master
 import tkinter as tk
 from src.components import Canvas, WordGrid
 
@@ -65,18 +64,22 @@ class HiddenWordDisplayer:
 
 
 class MessageDisplayer:
-
-    def __init__(self, master:tk.Tk, row:int) -> None:
+    
+    def __init__(self, master:tk.Tk, row:int, message:str) -> None:
         self.master: tk.Tk = master
 
         self._build_component_frame(row=row)
-        self._build_child_components()
+        self._build_child_components(message=message)
 
     def _build_component_frame(self, row:int) -> None:
         self.component_frame:tk.Frame = tk.Frame(master=self.master)
         self.component_frame.grid(row=row)
 
-    def _build_child_components(self) -> None:
-        self.string_var: tk.StringVar = tk.StringVar(value="This is a test Message")
+    def _build_child_components(self, message:str) -> None:
+        self.string_var: tk.StringVar = tk.StringVar(value=message)
         label: tk.Label = tk.Label( master=self.component_frame, textvariable=self.string_var)
         label.grid(row=1, sticky="we")
+
+    def set_message(self, msg:str) -> None:
+        self.string_var.set(msg)
+        self.master.update_idletasks()
