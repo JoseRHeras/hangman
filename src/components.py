@@ -1,6 +1,12 @@
 import tkinter as tk
+from typing import List
+
+from src.shapes import Line, Shape, get_shape
+
 
 class Canvas:
+    
+    hangman_pieces = [["circle", 80, 180, 120, 130], ]
 
     def __init__(self, master:tk.Frame, pieces_to_draw:int) -> None:
         self.master:tk.Frame = master
@@ -16,7 +22,10 @@ class Canvas:
     
 
     def draw_next_piece(self) -> None:
-        print("Next piece ")
+        shape_name, coordinates = self.hangman_pieces[0][0], self.hangman_pieces[0][1:]
+        shape: Shape = get_shape(shape=shape_name)
+        
+        shape.draw(canvas=self.canvas, coordinates=coordinates)
 
 
 

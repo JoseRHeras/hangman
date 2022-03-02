@@ -39,8 +39,7 @@ class Hangman:
             
         if self.game_master.is_game_over():
             self._display_result_and_set_block_state()
-            
-        
+               
     def _display_result_and_set_block_state(self) -> None:
         self.input_box.disable_button()
 
