@@ -23,7 +23,7 @@ class GameStatusDisplayer:
             master=self.component_frame, max_number=self.allowed_attempts)
 
     def update_displayer(self, letter: str) -> None:
-        self.word_grid.insert_letter_into_grid(letter=letter)
+        self.word_grid.insert_letter_to_grid(letter=letter)
         self.canvas.draw_next_piece()
 
 
