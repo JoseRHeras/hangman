@@ -25,7 +25,9 @@ class Hangman:
         self.input_box: InputBox = InputBox(
             master=self.root, row=3, cmd=self._update_interface)
         self.message_displayer: MessageDisplayer = MessageDisplayer(
-            master=self.root, row=4, message=self.game_master.get_message())
+            master=self.root, row=4)
+
+        self.message_displayer.set_message(self.game_master.get_message())
 
     def _update_interface(self, word: str) -> None:
         self.game_master.load_and_evaluate_usr_input(usr_input=word)
@@ -33,7 +35,7 @@ class Hangman:
         self.message_displayer.set_message(self.game_master.get_message())
 
         if self.game_master.get_status_of_usr_input():
-            self.hidden_word_displayer.reveal_letters_on_the_displayer(letter=word)
+            self.hidden_word_displayer.reveal_letter(letter=word)
         elif len(word) == 1:
             self.game_status_displayer.update_displayer(letter=word)
             
